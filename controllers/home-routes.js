@@ -3,6 +3,7 @@ const sequelize = require("../config/connection.js");
 const { Post, User, Comment } = require("../models");
 
 router.get("/", (req, res) => {
+  console.log(req.session);
   Post.findAll({
     attributes: [
       "id",
@@ -33,7 +34,7 @@ router.get("/", (req, res) => {
   })
     .then((dbPostData) => {
       // pass a single post object into the homepage template
-    //   console.log(dbPostData[0]);
+      //   console.log(dbPostData[0]);
       const posts = dbPostData.map((post) => post.get({ plain: true }));
       res.render("homepage", { posts });
     })
@@ -41,6 +42,15 @@ router.get("/", (req, res) => {
       console.log(err);
       res.status(500).json(err);
     });
+});
+
+router.get("/login", (req, res) => {
+  if (req.session.loggedIn) {
+    res.redirect("/");
+    return;
+  }
+
+  res.render("login");
 });
 
 module.exports = router;
